@@ -2,8 +2,9 @@
 
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:8.0
     container_name: edulang
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -17,11 +18,13 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
     container_name: backend_service
     volumes:
       - ./backend:/app
-      - /app/node_modules  # Evita sobreescribir node_modules
+      - /app/node_modules
     ports:
       - "3000:3000"
     environment:
@@ -31,6 +34,5 @@ services:
       DB_NAME: ${MYSQL_DATABASE}
     depends_on:
       - mysql
-
 volumes:
   mysql_data:
